@@ -17,17 +17,19 @@ const logger = require('@/utils/logger');
 const app = express();
 
 // Security middleware
-app.use(helmet({
-  crossOriginEmbedderPolicy: false,
-  contentSecurityPolicy: {
-    directives: {
-      defaultSrc: ["'self'"],
-      styleSrc: ["'self'", "'unsafe-inline'"],
-      scriptSrc: ["'self'"],
-      imgSrc: ["'self'", "data:", "https:"]
+app.use(
+  helmet({
+    crossOriginEmbedderPolicy: false,
+    contentSecurityPolicy: {
+      directives: {
+        defaultSrc: ["'self'"],
+        styleSrc: ["'self'", "'unsafe-inline'"],
+        scriptSrc: ["'self'"],
+        imgSrc: ["'self'", 'data:', 'https:']
+      }
     }
-  }
-}));
+  })
+);
 
 // CORS middleware (must be before routes)
 app.use(corsMiddleware);
@@ -36,9 +38,11 @@ app.use(corsMiddleware);
 app.use(compression());
 
 // Logging middleware
-app.use(morgan('combined', {
-  stream: { write: message => logger.info(message.trim()) }
-}));
+app.use(
+  morgan('combined', {
+    stream: { write: message => logger.info(message.trim()) }
+  })
+);
 
 // Body parsing middleware
 app.use(express.json({ limit: '10mb' }));
