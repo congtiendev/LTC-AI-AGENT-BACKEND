@@ -9,7 +9,7 @@ const morgan = require('morgan');
 const path = require('path');
 
 const config = require('@/config');
-const routes = require('@/routes');
+// const routes = require('@/routes'); // TODO: Create routes when needed
 const { errorHandler } = require('@/middleware');
 const { corsMiddleware, corsErrorHandler } = require('@/middleware/cors');
 const logger = require('@/utils/logger');
@@ -21,10 +21,10 @@ app.use(helmet({
   crossOriginEmbedderPolicy: false,
   contentSecurityPolicy: {
     directives: {
-      defaultSrc: ["'self'"],
-      styleSrc: ["'self'", "'unsafe-inline'"],
-      scriptSrc: ["'self'"],
-      imgSrc: ["'self'", "data:", "https:"]
+      defaultSrc: ['\'self\''],
+      styleSrc: ['\'self\'', '\'unsafe-inline\''],
+      scriptSrc: ['\'self\''],
+      imgSrc: ['\'self\'', 'data:', 'https:']
     }
   }
 }));
@@ -47,8 +47,8 @@ app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 // Static files
 app.use('/uploads', express.static(path.join(__dirname, '../uploads')));
 
-// API routes
-app.use(config.apiPrefix, routes);
+// API routes - TODO: Uncomment when routes are created
+// app.use(config.apiPrefix, routes);
 
 // Health check endpoint
 app.get('/health', (req, res) => {

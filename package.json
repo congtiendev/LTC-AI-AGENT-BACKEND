@@ -12,21 +12,18 @@
     "lint:check": "eslint src/**/*.js",
     "lint": "eslint src/**/*.js --fix",
     "format": "prettier --write src/**/*.js",
-    "migrate": "node scripts/migrate.js",
-    "seed": "node scripts/seed.js",
     "create-admin": "node scripts/create-admin.js",
     "backup": "node scripts/backup.js",
     "build": "echo Build process here",
     "deploy": "node scripts/deploy.js",
-    "migrate:create": "node scripts/migrate.js create",
-    "migrate:run": "node scripts/migrate.js run",
-    "migrate:rollback": "node scripts/migrate.js rollback",
-    "migrate:status": "node scripts/migrate.js status",
-    "migrate:fresh": "node scripts/migrate.js fresh",
-    "seed:create": "node scripts/seed.js create",
-    "seed:run": "node scripts/seed.js run",
-    "seed:reset": "node scripts/seed.js reset",
-    "seed:status": "node scripts/seed.js status"
+    "db:migrate": "npx sequelize-cli db:migrate",
+    "db:migrate:undo": "npx sequelize-cli db:migrate:undo",
+    "db:seed:all": "npx sequelize-cli db:seed:all",
+    "db:create": "npx sequelize-cli db:create",
+    "db:drop": "npx sequelize-cli db:drop",
+    "model:generate": "npx sequelize-cli model:generate",
+    "seed:generate": "npx sequelize-cli seed:generate",
+    "migration:generate": "npx sequelize-cli migration:generate"
   },
   "keywords": [
     "kleverbot",
@@ -71,7 +68,8 @@
     "@/routes": "./src/routes",
     "@/utils": "./src/utils",
     "@/validators": "./src/validators",
-    "@/models": "./src/database/models"
+    "@/models": "./src/database/sequelize-models",
+    "@/database": "./src/database"
   },
   "devDependencies": {
     "@types/jest": "^29.5.8",
