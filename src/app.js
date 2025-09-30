@@ -9,7 +9,7 @@ const morgan = require('morgan');
 const path = require('path');
 
 const config = require('@/config');
-// const routes = require('@/routes'); // TODO: Create routes when needed
+const routes = require('@/routes');
 const { errorHandler } = require('@/middleware');
 const { corsMiddleware, corsErrorHandler } = require('@/middleware/cors');
 const logger = require('@/utils/logger');
@@ -17,17 +17,19 @@ const logger = require('@/utils/logger');
 const app = express();
 
 // Security middleware
-app.use(helmet({
-  crossOriginEmbedderPolicy: false,
-  contentSecurityPolicy: {
-    directives: {
-      defaultSrc: ['\'self\''],
-      styleSrc: ['\'self\'', '\'unsafe-inline\''],
-      scriptSrc: ['\'self\''],
-      imgSrc: ['\'self\'', 'data:', 'https:']
+app.use(
+  helmet({
+    crossOriginEmbedderPolicy: false,
+    contentSecurityPolicy: {
+      directives: {
+        defaultSrc: ["'self'"],
+        styleSrc: ["'self'", "'unsafe-inline'"],
+        scriptSrc: ["'self'"],
+        imgSrc: ["'self'", 'data:', 'https:']
+      }
     }
-  }
-}));
+  })
+);
 
 // CORS middleware (must be before routes)
 app.use(corsMiddleware);
@@ -36,9 +38,11 @@ app.use(corsMiddleware);
 app.use(compression());
 
 // Logging middleware
-app.use(morgan('combined', {
-  stream: { write: message => logger.info(message.trim()) }
-}));
+app.use(
+  morgan('combined', {
+    stream: { write: message => logger.info(message.trim()) }
+  })
+);
 
 // Body parsing middleware
 app.use(express.json({ limit: '10mb' }));
@@ -47,8 +51,8 @@ app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 // Static files
 app.use('/uploads', express.static(path.join(__dirname, '../uploads')));
 
-// API routes - TODO: Uncomment when routes are created
-// app.use(config.apiPrefix, routes);
+// API routes
+app.use(config.apiPrefix, routes);
 
 // Health check endpoint
 app.get('/health', (req, res) => {
