@@ -12,8 +12,8 @@ const sequelize = new Sequelize({
   host: process.env.DB_HOST,
   port: process.env.DB_PORT || 5432,
   dialect: 'postgres',
-  logging: process.env.NODE_ENV === 'development' ? 
-    (msg) => logger.debug(msg) : false,
+  logging:
+    process.env.NODE_ENV === 'development' ? msg => logger.debug(msg) : false,
   pool: {
     min: parseInt(process.env.DB_POOL_MIN) || 5,
     max: parseInt(process.env.DB_POOL_MAX) || 20,
@@ -21,15 +21,19 @@ const sequelize = new Sequelize({
     idle: 10000
   },
   dialectOptions: {
-    ssl: process.env.DB_SSL === 'true' ? {
-      require: true,
-      rejectUnauthorized: false
-    } : false
+    ssl:
+      process.env.DB_SSL === 'true'
+        ? {
+            require: true,
+            rejectUnauthorized: false
+          }
+        : false
   }
 });
 
 // Test connection
-sequelize.authenticate()
+sequelize
+  .authenticate()
   .then(() => logger.info('✅ Database connected successfully'))
   .catch(err => logger.error('❌ Database connection failed:', err));
 
