@@ -28,9 +28,9 @@ module.exports = {
   // CORS configuration
   cors: {
     origin: function (origin, callback) {
-      const allowedOrigins = process.env.CORS_ORIGIN ? 
-        process.env.CORS_ORIGIN.split(',').map(o => o.trim()) : 
-        ['http://localhost:3000', 'http://localhost:3001'];
+      const allowedOrigins = process.env.CORS_ORIGIN
+        ? process.env.CORS_ORIGIN.split(',').map(o => o.trim())
+        : ['http://localhost:3000', 'http://localhost:3001'];
 
       // Allow requests with no origin (mobile apps, Postman, etc.)
       if (!origin) return callback(null, true);
@@ -42,9 +42,16 @@ module.exports = {
       }
     },
     credentials: process.env.CORS_CREDENTIALS === 'true',
-    methods: (process.env.CORS_METHODS || 'GET,POST,PUT,DELETE,OPTIONS').split(','),
-    allowedHeaders: (process.env.CORS_ALLOWED_HEADERS || 'Content-Type,Authorization,X-Requested-With').split(','),
-    exposedHeaders: (process.env.CORS_EXPOSED_HEADERS || 'X-Total-Count').split(','),
+    methods: (process.env.CORS_METHODS || 'GET,POST,PUT,DELETE,OPTIONS').split(
+      ','
+    ),
+    allowedHeaders: (
+      process.env.CORS_ALLOWED_HEADERS ||
+      'Content-Type,Authorization,X-Requested-With'
+    ).split(','),
+    exposedHeaders: (process.env.CORS_EXPOSED_HEADERS || 'X-Total-Count').split(
+      ','
+    ),
     maxAge: parseInt(process.env.CORS_MAX_AGE) || 86400 // 24 hours
   },
 
@@ -57,7 +64,9 @@ module.exports = {
   // Upload configuration
   upload: {
     maxSize: parseInt(process.env.UPLOAD_MAX_SIZE) || 5242880, // 5MB
-    allowedTypes: (process.env.UPLOAD_ALLOWED_TYPES || 'jpg,jpeg,png,gif').split(',')
+    allowedTypes: (
+      process.env.UPLOAD_ALLOWED_TYPES || 'jpg,jpeg,png,gif'
+    ).split(',')
   },
 
   // Rate limiting

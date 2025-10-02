@@ -7,21 +7,22 @@ const logger = require('@/utils/logger');
 
 // Development origins (can be multiple)
 const developmentOrigins = [
-  'http://localhost:3000',  // Frontend dev server
-  'http://localhost:3001',  // Alternative frontend port
-  'http://127.0.0.1:3000',  // Alternative localhost
+  'http://localhost:3000', // Frontend dev server
+  'http://localhost:3001', // Alternative frontend port
+  'http://127.0.0.1:3000', // Alternative localhost
   'http://127.0.0.1:3001'
 ];
 
 // Production origins (from environment)
-const productionOrigins = process.env.CORS_ORIGIN ? 
-  process.env.CORS_ORIGIN.split(',').map(origin => origin.trim()) : 
-  [];
+const productionOrigins = process.env.CORS_ORIGIN
+  ? process.env.CORS_ORIGIN.split(',').map(origin => origin.trim())
+  : [];
 
 // Combine origins based on environment
-const allowedOrigins = process.env.NODE_ENV === 'production' ? 
-  productionOrigins : 
-  [...developmentOrigins, ...productionOrigins];
+const allowedOrigins =
+  process.env.NODE_ENV === 'production'
+    ? productionOrigins
+    : [...developmentOrigins, ...productionOrigins];
 
 // CORS configuration
 const corsOptions = {
@@ -48,9 +49,7 @@ const corsOptions = {
   credentials: process.env.CORS_CREDENTIALS !== 'false',
 
   // Allowed HTTP methods
-  methods: [
-    'GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS', 'HEAD'
-  ],
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS', 'HEAD'],
 
   // Allowed request headers
   allowedHeaders: [
@@ -67,7 +66,7 @@ const corsOptions = {
   // Headers exposed to the client
   exposedHeaders: [
     'X-Total-Count',
-    'X-Page-Count', 
+    'X-Page-Count',
     'X-Has-Next-Page',
     'X-Rate-Limit-Remaining',
     'X-Rate-Limit-Reset'
@@ -87,7 +86,9 @@ const corsMiddleware = cors(corsOptions);
 const enhancedCORS = (req, res, next) => {
   // Log CORS requests in development
   if (process.env.NODE_ENV === 'development') {
-    logger.debug(`CORS Request: ${req.method} ${req.path} from ${req.get('Origin') || 'no-origin'}`);
+    logger.debug(
+      `CORS Request: ${req.method} ${req.path} from ${req.get('Origin') || 'no-origin'}`
+    );
   }
 
   corsMiddleware(req, res, next);
