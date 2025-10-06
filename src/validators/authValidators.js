@@ -43,11 +43,7 @@ const registerValidator = [
   body('lastName')
     .trim()
     .isLength({ min: 1, max: 50 })
-    .withMessage('Last name is required and must not exceed 50 characters')
-    .matches(/^[a-zA-ZÀ-ÿ\s'-]+$/)
-    .withMessage(
-      'Last name can only contain letters, spaces, apostrophes and hyphens'
-    ),
+    .withMessage('Last name is required and must not exceed 50 characters'),
 
   body('phone')
     .optional()

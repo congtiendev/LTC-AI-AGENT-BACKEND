@@ -8,9 +8,22 @@ const JWT_ACCESS_EXPIRES_IN = process.env.JWT_ACCESS_EXPIRES_IN || '1h';
 const JWT_REFRESH_EXPIRES_IN = process.env.JWT_REFRESH_EXPIRES_IN || '30d';
 
 /**
+ * Token utilities - generate and verify JWT access/refresh tokens.
+ * @module tokenUtils
+ */
+
+/**
  * Generate access and refresh tokens
  * @param {Object} payload - User data to encode
  * @returns {Object} { accessToken, refreshToken }
+ */
+/**
+ * Generate access and refresh tokens
+ * @param {Object} payload - User data to encode
+ * @param {number|string} payload.id - User id
+ * @param {string} payload.username
+ * @param {string} [payload.email]
+ * @returns {{accessToken:string, refreshToken:string}}
  */
 const generateTokens = payload => {
   const accessToken = jwt.sign(
@@ -51,6 +64,11 @@ const generateTokens = payload => {
  * @param {string} token
  * @returns {Object|null} Decoded payload or null
  */
+/**
+ * Verify access token
+ * @param {string} token
+ * @returns {Object|null} Decoded payload or null
+ */
 const verifyAccessToken = token => {
   try {
     const decoded = jwt.verify(token, JWT_ACCESS_SECRET, {
@@ -65,6 +83,11 @@ const verifyAccessToken = token => {
   }
 };
 
+/**
+ * Verify refresh token
+ * @param {string} token
+ * @returns {Object|null} Decoded payload or null
+ */
 /**
  * Verify refresh token
  * @param {string} token
@@ -86,6 +109,11 @@ const verifyRefreshToken = token => {
 
 /**
  * Extract token from Authorization header
+ * @param {string} authHeader
+ * @returns {string|null}
+ */
+/**
+ * Extract Bearer token from Authorization header
  * @param {string} authHeader
  * @returns {string|null}
  */

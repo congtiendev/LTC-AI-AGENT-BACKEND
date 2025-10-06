@@ -3,6 +3,11 @@ const BaseRepository = require('./BaseRepository');
 const { RefreshToken } = require('@/database/models');
 const logger = require('@/utils/logger');
 
+/**
+ * Repository for managing refresh token records in the database.
+ * Provides helpers to create, find, revoke, and cleanup tokens.
+ * @extends BaseRepository
+ */
 class RefreshTokenRepository extends BaseRepository {
   constructor() {
     super(RefreshToken);
