@@ -5,7 +5,23 @@ const { hashPassword, comparePassword } = require('@/utils/passwordUtils');
 const { generateTokens, verifyRefreshToken } = require('@/utils/tokenUtils');
 const logger = require('@/utils/logger');
 
+/**
+ * Service layer responsible for authentication business logic.
+ * Handles registration, login, token refresh and logout flows.
+ * @class AuthService
+ */
 class AuthService {
+  /**
+   * Register a new user and create initial tokens.
+   * @param {Object} userData
+   * @param {string} userData.username
+   * @param {string} userData.email
+   * @param {string} userData.password
+   * @param {string} [userData.firstName]
+   * @param {string} [userData.lastName]
+   * @param {string} [userData.phone]
+   * @returns {Promise<Object>} Created user data and tokens
+   */
   async register(userData) {
     try {
       const { username, email, password, firstName, lastName, phone } =
@@ -65,6 +81,13 @@ class AuthService {
     }
   }
 
+  /**
+   * Authenticate a user by username/email/phone and return tokens.
+   * @param {string} account - username | email | phone
+   * @param {string} password
+   * @param {boolean} [rememberMe=false]
+   * @returns {Promise<Object>} User data and tokens
+   */
   async login(account, password, rememberMe = false) {
     try {
       const user = await UserRepository.findByEmailUsernameOrPhone(account);
@@ -116,6 +139,12 @@ class AuthService {
     }
   }
 
+  /**
+   * Refresh access token using a valid refresh token.
+   * This will revoke the old refresh token and create a new one.
+   * @param {string} refreshToken
+   * @returns {Promise<Object>} New access and refresh tokens
+   */
   async refreshAccessToken(refreshToken) {
     try {
       const decoded = verifyRefreshToken(refreshToken);
@@ -161,19 +190,56 @@ class AuthService {
     }
   }
 
+  /**
+   * Revoke a single refresh token (logout).
+   * Verifies the token signature and checks DB record before revoking.
+   * @param {string} refreshToken
+   * @returns {Promise<boolean>} True if revoked successfully
+   */
   async logout(refreshToken) {
     try {
-      if (refreshToken) {
-        await RefreshTokenRepository.revokeToken(refreshToken);
+      if (!refreshToken) {
+        throw new Error('INVALID_TOKEN');
       }
-      logger.info('User logged out');
-      return true;
+
+      // Verify refresh token trước khi revoke
+      const { verifyRefreshToken } = require('@/utils/tokenUtils');
+      const decoded = verifyRefreshToken(refreshToken);
+      if (!decoded) {
+        throw new Error('INVALID_TOKEN');
+      }
+
+      // Kiểm tra token có tồn tại trong database không
+      const tokenRecord =
+        await RefreshTokenRepository.findByToken(refreshToken);
+      if (!tokenRecord) {
+        throw new Error('TOKEN_NOT_FOUND');
+      }
+
+      // Kiểm tra token đã bị revoke chưa
+      if (tokenRecord.revokedAt) {
+        throw new Error('TOKEN_ALREADY_REVOKED');
+      }
+
+      // Kiểm tra token đã hết hạn chưa
+      if (new Date() > tokenRecord.expiresAt) {
+        throw new Error('TOKEN_EXPIRED');
+      }
+
+      const result = await RefreshTokenRepository.revokeToken(refreshToken);
+      logger.info(`User ${decoded.id} logged out successfully`);
+      return result;
     } catch (error) {
       logger.error('AuthService.logout error:', error);
       throw error;
     }
   }
 
+  /**
+   * Revoke all refresh tokens for a given user id.
+   * @param {number} userId
+   * @returns {Promise<boolean>}
+   */
   async logoutAll(userId) {
     try {
       await RefreshTokenRepository.revokeAllUserTokens(userId);
@@ -185,6 +251,11 @@ class AuthService {
     }
   }
 
+  /**
+   * Get current user by id including roles, sanitized.
+   * @param {number} userId
+   * @returns {Promise<Object>} Sanitized user object
+   */
   async getCurrentUser(userId) {
     try {
       const user = await UserRepository.findByIdWithRoles(userId);
@@ -198,6 +269,11 @@ class AuthService {
     }
   }
 
+  /**
+   * Remove sensitive fields from user object (password).
+   * @param {Object} user
+   * @returns {Object} sanitized user
+   */
   sanitizeUser(user) {
     const userObj = user.toJSON ? user.toJSON() : user;
     delete userObj.password;

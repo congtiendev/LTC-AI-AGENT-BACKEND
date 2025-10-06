@@ -46,11 +46,13 @@ router.post('/refresh', refreshValidator, AuthController.refreshToken);
 /**
  * @route   POST /api/v1/auth/logout
  * @desc    Logout user and invalidate refresh token
- * @access  Private
- * @header  Authorization: Bearer <token>
+ * @access  Public (only needs refresh token)
  * @body    { refreshToken }
  */
-router.post('/logout', auth, AuthController.logout);
+router.post(
+  '/logout',
+  AuthController.logout
+);
 
 /**
  * @route   GET /api/v1/auth/profile

@@ -7,6 +7,13 @@ const UserRepository = require('@/repositories/UserRepository');
 const ApiResponse = require('@/utils/responses');
 const logger = require('@/utils/logger');
 
+/**
+ * Authentication middleware - verifies access token and attaches user to req.
+ * Returns 401 when token missing/invalid, 403 when account inactive.
+ * @param {import('express').Request} req
+ * @param {import('express').Response} res
+ * @param {import('express').NextFunction} next
+ */
 const authenticate = async (req, res, next) => {
   try {
     const authHeader = req.headers.authorization;

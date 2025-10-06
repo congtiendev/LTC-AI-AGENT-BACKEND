@@ -4,7 +4,18 @@ const AuthService = require('@/services/AuthService');
 const ApiResponse = require('@/utils/responses');
 const logger = require('@/utils/logger');
 
+/**
+ * Controller responsible for authentication-related endpoints.
+ * Each method maps to an Express route and returns a standardized API response.
+ * @class AuthController
+ */
 class AuthController {
+  /**
+   * Register a new user.
+   * @param {import('express').Request} req - Express request object
+   * @param {import('express').Response} res - Express response object
+   * @returns {Promise<import('express').Response>}
+   */
   async register(req, res) {
     try {
       const errors = validationResult(req);
@@ -28,6 +39,12 @@ class AuthController {
     }
   }
 
+  /**
+   * Login user and return access/refresh tokens.
+   * @param {import('express').Request} req
+   * @param {import('express').Response} res
+   * @returns {Promise<import('express').Response>}
+   */
   async login(req, res) {
     try {
       const errors = validationResult(req);
@@ -56,6 +73,12 @@ class AuthController {
     }
   }
 
+  /**
+   * Refresh access token using a valid refresh token.
+   * @param {import('express').Request} req
+   * @param {import('express').Response} res
+   * @returns {Promise<import('express').Response>}
+   */
   async refreshToken(req, res) {
     try {
       const { refreshToken } = req.body;
@@ -83,17 +106,52 @@ class AuthController {
     }
   }
 
+  /**
+   * Logout a user by revoking the provided refresh token.
+   * Body should contain: { refreshToken: string }
+   * @param {import('express').Request} req
+   * @param {import('express').Response} res
+   * @returns {Promise<import('express').Response>}
+   */
   async logout(req, res) {
     try {
+      // Debug logging
+      logger.info('Logout request body:', req.body);
+      logger.info('Content-Type:', req.headers['content-type']);
+
       const { refreshToken } = req.body;
-      await AuthService.logout(refreshToken);
+
+      if (!refreshToken) {
+        logger.warn('Missing refresh token in request body');
+        return ApiResponse.badRequest(res, 'Refresh token is required');
+      }
+
+      const result = await AuthService.logout(refreshToken);
+      if (!result) {
+        return ApiResponse.unauthorized(res, 'Invalid or expired token');
+      }
+
       return ApiResponse.success(res, null, 'Logout successful');
     } catch (error) {
       logger.error('AuthController.logout error:', error);
+
+      if (
+        error.message === 'INVALID_TOKEN' ||
+        error.message === 'TOKEN_NOT_FOUND'
+      ) {
+        return ApiResponse.unauthorized(res, 'Invalid or expired token');
+      }
+
       return ApiResponse.error(res, 'Logout failed');
     }
   }
 
+  /**
+   * Revoke all refresh tokens for a user (logout from all devices).
+   * @param {import('express').Request} req
+   * @param {import('express').Response} res
+   * @returns {Promise<import('express').Response>}
+   */
   async logoutAll(req, res) {
     try {
       const userId = req.user.id;
@@ -105,6 +163,12 @@ class AuthController {
     }
   }
 
+  /**
+   * Get profile of current authenticated user.
+   * @param {import('express').Request} req
+   * @param {import('express').Response} res
+   * @returns {Promise<import('express').Response>}
+   */
   async me(req, res) {
     try {
       const userId = req.user.id;
