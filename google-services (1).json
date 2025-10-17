@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "671656539253",
+    "project_id": "workgpt-c69d2",
+    "storage_bucket": "workgpt-c69d2.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:671656539253:android:cd454f61a64a701f16f43c",
+        "android_client_info": {
+          "package_name": "com.innocom.workgpt"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAeUydjWwwj-KIxqe1UGvUnWZhjUO5GJy0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
