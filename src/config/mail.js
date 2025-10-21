@@ -14,7 +14,9 @@ const createTransporter = () => {
     const pass = process.env.MAIL_APP_PASSWORD || process.env.MAIL_PASS;
 
     if (!user || !pass) {
-      throw new Error('MAIL_DRIVER=gmail requires MAIL_FROM_ADDRESS and MAIL_APP_PASSWORD to be set');
+      throw new Error(
+        'MAIL_DRIVER=gmail requires MAIL_FROM_ADDRESS and MAIL_APP_PASSWORD to be set'
+      );
     }
 
     return nodemailer.createTransport({

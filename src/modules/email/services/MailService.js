@@ -1,5 +1,5 @@
 const { createTransporter } = require('@/config/mail');
-const { renderTemplate } = require('./emailTemplateService');
+const { renderTemplate } = require('./EmailTemplateService');
 const nodemailer = require('nodemailer');
 const logger = require('@/utils/logger');
 

@@ -1,9 +1,7 @@
 const crypto = require('crypto');
-const ms = require('ms');
 const UserRepository = require('@/repositories/UserRepository');
-const RefreshTokenRepository = require('@/repositories/RefreshTokenRepository');
 const PasswordResetTokenRepository = require('@/repositories/PasswordResetTokenRepository');
-const { sendEmail } = require('./mailService');
+const { sendEmail } = require('./MailService');
 const logger = require('@/utils/logger');
 
 /**

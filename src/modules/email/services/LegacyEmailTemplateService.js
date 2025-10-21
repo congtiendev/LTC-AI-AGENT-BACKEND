@@ -31,11 +31,7 @@ const renderTemplate = (name, data = {}) => {
   const styles = fs.readFileSync(path.join(templatesDir, 'styles.css'), 'utf8');
 
   const compiledBody = handlebars.compile(body)(data);
-  const final = handlebars.compile(layout)({
-    ...data,
-    body: compiledBody,
-    styles
-  });
+  const final = handlebars.compile(layout)({ ...data, body: compiledBody, styles });
 
   // inline CSS for email clients
   return juice(final);

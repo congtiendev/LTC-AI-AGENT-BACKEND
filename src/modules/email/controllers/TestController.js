@@ -1,4 +1,4 @@
-const { sendEmail } = require('@/modules/email/services/MailService');
+const { sendEmail } = require('../services/MailService');
 const ApiResponse = require('@/utils/responses');
 const logger = require('@/utils/logger');
 

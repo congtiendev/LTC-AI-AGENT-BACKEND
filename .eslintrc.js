@@ -68,7 +68,8 @@ module.exports = {
           ['@/routes', './src/routes'],
           ['@/utils', './src/utils'],
           ['@/validators', './src/validators'],
-          ['@/models', './src/database/models']
+          ['@/models', './src/database/models'],
+          ['@/modules', './src/modules']
         ]
       }
     }

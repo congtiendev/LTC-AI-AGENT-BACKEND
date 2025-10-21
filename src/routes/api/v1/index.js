@@ -8,6 +8,9 @@ const passwordResetRoutes = require('./passwordReset');
 const emailPreviewRoutes = require('./emailPreview');
 const testRoutes = require('./test');
 
+// Email Module Routes
+const { emailRoutes } = require('@/modules/email');
+
 const router = express.Router();
 
 // Health check for API v1
@@ -19,6 +22,7 @@ router.get('/', (req, res) => {
     timestamp: new Date().toISOString(),
     endpoints: {
       auth: '/api/v1/auth',
+      email: '/api/v1/email',
       passwordReset: '/api/v1/password-reset',
       emailPreview: '/api/v1/preview',
       testEmail: '/api/v1/test/email (dev only)',
@@ -32,7 +36,10 @@ router.get('/', (req, res) => {
 // Mount route modules
 router.use('/auth', authRoutes);
 
-// Password reset & email preview
+// Email Module (comprehensive email management)
+router.use('/email', emailRoutes);
+
+// Legacy routes (for backward compatibility)
 router.use('/', passwordResetRoutes);
 router.use('/', emailPreviewRoutes);
 
