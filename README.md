@@ -7,6 +7,13 @@ access control, and PostgreSQL database.
 
 - **JWT Authentication** - Access & refresh tokens
 - **Role-Based Access Control** - Admin, User, Moderator roles
+- **📧 Email Module** - Comprehensive email management system
+  - Email sending (single, bulk, scheduled)
+  - Template management with Handlebars
+  - Email history tracking & analytics
+  - Advanced search & filtering
+  - Rate limiting & queue management
+  - Webhook support for email events
 - **Multi-Login Support** - Login via username, email, or phone
 - **Rate Limiting** - Protection against brute force attacks
 - **Input Validation** - Comprehensive validation with express-validator
@@ -17,7 +24,26 @@ access control, and PostgreSQL database.
 - **Docker Support** - Containerized deployment
 - **ESLint + Prettier** - Code quality and formatting
 
-## 📋 Prerequisites
+## � Table of Contents
+
+- [🚀 Features](#-features)
+- [📋 Prerequisites](#-prerequisites)
+- [🛠️ Installation](#️-installation)
+- [🗃️ Database Schema](#️-database-schema)
+- [🔐 Authentication API](#-authentication-api)
+- [📧 Email Module API](#-email-module-api)
+- [🔧 Configuration](#-configuration)
+- [📁 Project Structure](#-project-structure)
+- [🐳 Docker Deployment](#-docker-deployment)
+- [🤝 Contributing](#-contributing)
+
+## 📖 Documentation
+
+- [📧 Email Module Documentation](docs/EMAIL_MODULE.md) - Comprehensive email system guide
+- [📋 API Reference](docs/API_REFERENCE.md) - Quick API reference
+- [🔧 Configuration Guide](docs/CONFIGURATION.md) - Environment and setup guide
+
+## �📋 Prerequisites
 
 - **Node.js** v18.0.0 or higher
 - **PostgreSQL** v12.0 or higher
@@ -178,6 +204,271 @@ Content-Type: application/json
   "refreshToken": "<refresh_token>"
 }
 ```
+
+## 📧 Email Module API
+
+The Email Module provides comprehensive email management capabilities including sending, history tracking, template management, and analytics.
+
+### Email Sending
+
+#### Send Single Email
+
+```http
+POST /api/v1/email/send
+Authorization: Bearer <access_token>
+Content-Type: application/json
+
+{
+  "to": "user@example.com",
+  "subject": "Welcome to KleverBot",
+  "template": "welcome",
+  "data": {
+    "name": "John Doe",
+    "loginUrl": "https://app.kleverbot.com"
+  },
+  "category": "notification",
+  "priority": "normal"
+}
+```
+
+#### Send Bulk Emails
+
+```http
+POST /api/v1/email/bulk
+Authorization: Bearer <access_token>
+Content-Type: application/json
+
+{
+  "emails": [
+    {
+      "to": "user1@example.com",
+      "subject": "Newsletter #1",
+      "template": "newsletter",
+      "data": { "name": "User 1" }
+    },
+    {
+      "to": "user2@example.com", 
+      "subject": "Newsletter #2",
+      "template": "newsletter",
+      "data": { "name": "User 2" }
+    }
+  ],
+  "category": "marketing",
+  "priority": "low"
+}
+```
+
+#### Queue Email for Later
+
+```http
+POST /api/v1/email/queue
+Authorization: Bearer <access_token>
+Content-Type: application/json
+
+{
+  "to": "user@example.com",
+  "subject": "Scheduled Email",
+  "template": "reminder",
+  "data": { "eventDate": "2025-12-25" },
+  "scheduledAt": "2025-12-24T10:00:00Z",
+  "priority": "high"
+}
+```
+
+### Email History & Analytics
+
+#### Get Email History
+
+```http
+GET /api/v1/email/history?page=1&limit=20&status=sent&category=notification
+Authorization: Bearer <access_token>
+```
+
+#### Get Email Statistics
+
+```http
+GET /api/v1/email/history/stats?period=7d&category=all
+Authorization: Bearer <access_token>
+```
+
+#### Get Detailed Email by ID
+
+```http
+GET /api/v1/email/history/:id
+Authorization: Bearer <access_token>
+```
+
+#### Retry Failed Email
+
+```http
+POST /api/v1/email/history/:id/retry
+Authorization: Bearer <access_token>
+```
+
+#### Search Email History
+
+```http
+POST /api/v1/email/history/search
+Authorization: Bearer <access_token>
+Content-Type: application/json
+
+{
+  "query": "welcome",
+  "filters": {
+    "status": ["sent", "delivered"],
+    "dateRange": {
+      "start": "2025-10-01",
+      "end": "2025-10-21"
+    },
+    "category": "notification"
+  }
+}
+```
+
+### Email Templates
+
+#### Get All Templates
+
+```http
+GET /api/v1/email/templates?category=notification&status=active
+Authorization: Bearer <access_token>
+```
+
+#### Get Template by ID
+
+```http
+GET /api/v1/email/templates/:id
+Authorization: Bearer <access_token>
+```
+
+#### Create New Template
+
+```http
+POST /api/v1/email/templates
+Authorization: Bearer <access_token>
+Content-Type: application/json
+
+{
+  "name": "welcome-email",
+  "subject": "Welcome to {{appName}}!",
+  "htmlContent": "<h1>Hello {{name}}!</h1><p>Welcome to our platform.</p>",
+  "textContent": "Hello {{name}}! Welcome to our platform.",
+  "category": "notification",
+  "variables": ["name", "appName"],
+  "description": "Welcome email for new users"
+}
+```
+
+#### Update Template
+
+```http
+PUT /api/v1/email/templates/:id
+Authorization: Bearer <access_token>
+Content-Type: application/json
+
+{
+  "subject": "Updated Welcome Message",
+  "htmlContent": "<h1>Hello {{name}}!</h1><p>Thanks for joining {{appName}}!</p>",
+  "status": "active"
+}
+```
+
+#### Delete Template
+
+```http
+DELETE /api/v1/email/templates/:id
+Authorization: Bearer <access_token>
+```
+
+#### Preview Template
+
+```http
+POST /api/v1/email/templates/:id/preview
+Authorization: Bearer <access_token>
+Content-Type: application/json
+
+{
+  "data": {
+    "name": "John Doe",
+    "appName": "KleverBot"
+  }
+}
+```
+
+#### Test Template
+
+```http
+POST /api/v1/email/templates/:id/test
+Authorization: Bearer <access_token>
+Content-Type: application/json
+
+{
+  "to": "test@example.com",
+  "data": {
+    "name": "Test User",
+    "appName": "KleverBot"
+  }
+}
+```
+
+### Email Notifications & Webhooks
+
+#### Send Notification Batch
+
+```http
+POST /api/v1/email/notifications/batch
+Authorization: Bearer <access_token>
+Content-Type: application/json
+
+{
+  "type": "user_signup",
+  "recipients": ["admin@example.com", "moderator@example.com"],
+  "data": {
+    "newUserEmail": "newuser@example.com",
+    "signupDate": "2025-10-21T15:30:00Z"
+  }
+}
+```
+
+#### Configure Webhook
+
+```http
+POST /api/v1/email/webhooks
+Authorization: Bearer <access_token>
+Content-Type: application/json
+
+{
+  "url": "https://your-app.com/email-webhook",
+  "events": ["delivered", "opened", "clicked", "bounced"],
+  "secret": "your-webhook-secret"
+}
+```
+
+### Email Categories & Settings
+
+Available email categories:
+- `notification` - System notifications
+- `marketing` - Marketing campaigns  
+- `transactional` - Transaction confirmations
+- `security` - Security alerts
+- `system` - System messages
+
+Email priorities:
+- `low` - Non-urgent emails
+- `normal` - Standard priority (default)
+- `high` - Important emails
+- `urgent` - Critical emails
+
+Email statuses:
+- `queued` - Waiting to be sent
+- `sending` - Currently being processed
+- `sent` - Successfully sent to provider
+- `delivered` - Confirmed delivery
+- `opened` - Email was opened
+- `clicked` - Links were clicked
+- `bounced` - Delivery failed
+- `failed` - Send failed
+- `spam` - Marked as spam
 
 ### System Endpoints
 
@@ -356,6 +647,15 @@ kleverbot-backend/
 | `JWT_REFRESH_SECRET`     | JWT refresh secret   | -             |
 | `JWT_ACCESS_EXPIRES_IN`  | Access token expiry  | `1h`          |
 | `JWT_REFRESH_EXPIRES_IN` | Refresh token expiry | `30d`         |
+| **Email Configuration**  |                      |               |
+| `MAIL_HOST`              | SMTP host            | -             |
+| `MAIL_PORT`              | SMTP port            | `587`         |
+| `MAIL_SECURE`            | Use SSL/TLS          | `false`       |
+| `MAIL_USER`              | SMTP username        | -             |
+| `MAIL_PASS`              | SMTP password        | -             |
+| `MAIL_FROM_NAME`         | Sender name          | `KleverBot`   |
+| `MAIL_FROM_ADDRESS`      | Sender email         | -             |
+| `MAIL_REPLY_TO`          | Reply-to email       | -             |
 
 ## 🤝 Contributing
 

@@ -4,6 +4,12 @@
 
 const express = require('express');
 const authRoutes = require('./auth');
+const passwordResetRoutes = require('./passwordReset');
+const emailPreviewRoutes = require('./emailPreview');
+const testRoutes = require('./test');
+
+// Email Module Routes
+const { emailRoutes } = require('@/modules/email');
 
 const router = express.Router();
 
@@ -16,6 +22,10 @@ router.get('/', (req, res) => {
     timestamp: new Date().toISOString(),
     endpoints: {
       auth: '/api/v1/auth',
+      email: '/api/v1/email',
+      passwordReset: '/api/v1/password-reset',
+      emailPreview: '/api/v1/preview',
+      testEmail: '/api/v1/test/email (dev only)',
       users: '/api/v1/users',
       roles: '/api/v1/roles',
       profile: '/api/v1/auth/profile'
@@ -25,6 +35,16 @@ router.get('/', (req, res) => {
 
 // Mount route modules
 router.use('/auth', authRoutes);
+
+// Email Module (comprehensive email management)
+router.use('/email', emailRoutes);
+
+// Legacy routes (for backward compatibility)
+router.use('/', passwordResetRoutes);
+router.use('/', emailPreviewRoutes);
+
+// Test routes (development only)
+router.use('/test', testRoutes);
 
 // TODO: Add other route modules
 // router.use('/users', userRoutes);
